@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import ThemeToggle from './ThemeToggle'
+import TopicSearch from './TopicSearch'
 import './Header.css'
 
 const NAV = [
@@ -49,11 +50,15 @@ export default function Header() {
         </Link>
 
         <div className="site-header__actions" ref={navRef}>
+          <TopicSearch className="topic-search--desktop" />
+
           <nav
             id="primary-nav"
             className={`site-nav ${open ? 'is-open' : ''}`}
             aria-label="Ana menü"
           >
+            <TopicSearch className="topic-search--mobile" />
+
             {NAV.map((item) => (
               <NavLink
                 key={item.to}
