@@ -1,0 +1,79 @@
+.lessons-list {
+  padding: 50px 24px 0;
+}
+
+.lessons-list__head {
+  margin-bottom: 36px;
+  max-width: 60ch;
+}
+
+.lessons-list__head .eyebrow {
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.lessons-list__head h1 {
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  margin-bottom: 12px;
+}
+
+.lessons-list__head p {
+  color: var(--text-soft);
+  font-size: 1.05rem;
+}
+
+.lessons-list__level {
+  margin-bottom: 48px;
+}
+
+.lessons-list__levelhead {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.lessons-list__code {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #fff;
+}
+
+.lessons-list__levelhead h2 {
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+
+.lessons-list__tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.lessons-list__more {
+  margin-left: auto;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--accent-strong);
+}
+
+.lessons-list__more:hover { text-decoration: underline; }
+
+@media (max-width: 540px) {
+  .lessons-list__more {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}
