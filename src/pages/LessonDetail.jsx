@@ -3,50 +3,57 @@ import { Link, useParams } from 'react-router-dom'
 import { getLesson, getQuiz, getLevelSiblings } from '../data'
 import { getLevel } from '../data/levels'
 import { useProgress } from '../context/ProgressContext'
+import { useLanguage } from '../context/LanguageContext'
+import { localizeLevel, localizeTopic, localizeTopics } from '../i18n/content'
 import { RichText } from '../utils/richText'
 import Quiz from '../components/Quiz'
 import './LessonDetail.css'
 
 export default function LessonDetail() {
   const { id } = useParams()
-  const lesson = getLesson(id)
+  const rawLesson = getLesson(id)
   const { markLessonViewed, markLessonCompleted, completed } = useProgress()
+  const { language, t } = useLanguage()
   const [tab, setTab] = useState('lesson')
+  const lesson = localizeTopic(rawLesson, language)
 
   useEffect(() => {
-    if (lesson) markLessonViewed(lesson.id)
+    if (rawLesson) markLessonViewed(rawLesson.id)
     setTab('lesson')
     window.scrollTo(0, 0)
-  }, [lesson, markLessonViewed])
+  }, [rawLesson, markLessonViewed])
 
   if (!lesson) {
     return (
       <div className="container lesson-detail__missing">
-        <h1>Konu bulunamadı</h1>
-        <Link to="/seviyeler" className="btn btn--primary">Seviyelere dön</Link>
+        <h1>{t('noTopicFound')}</h1>
+        <Link to="/seviyeler" className="btn btn--primary">
+          {language === 'en' ? 'Back to levels' : 'Seviyelere dön'}
+        </Link>
       </div>
     )
   }
 
-  const siblings = getLevelSiblings(lesson.id)
-  const idx = siblings.findIndex((l) => l.id === lesson.id)
-  const prev = siblings[idx - 1]
-  const next = siblings[idx + 1]
-  const questions = getQuiz(lesson.id)
+  const siblings = getLevelSiblings(rawLesson.id)
+  const localizedSiblings = localizeTopics(siblings, language)
+  const idx = siblings.findIndex((l) => l.id === rawLesson.id)
+  const prev = localizedSiblings[idx - 1]
+  const next = localizedSiblings[idx + 1]
+  const questions = language === 'en' ? lesson.quiz : getQuiz(rawLesson.id)
   const isDone = completed[lesson.id]
-  const level = getLevel(lesson.level)
+  const level = localizeLevel(getLevel(lesson.level), language)
 
   return (
     <article className="lesson-detail">
       <div className="lesson-detail__hero">
         <div className="container">
           <Link to={`/seviye/${lesson.level}`} className="lesson-detail__back">
-            ← {level ? `${level.code} Konuları` : 'Konular'}
+            ← {level ? `${level.code} ${t('topics')}` : t('topics')}
           </Link>
           <div className="lesson-detail__heading">
             <span className="lesson-detail__badge">{lesson.accent}</span>
             <div>
-              <span className="eyebrow">Ünite {lesson.order}</span>
+              <span className="eyebrow">{t('unit')} {lesson.order}</span>
               <h1>{lesson.title}</h1>
               <p className="lesson-detail__subtitle">{lesson.subtitle}</p>
             </div>
@@ -60,7 +67,7 @@ export default function LessonDetail() {
               className={`lesson-tab ${tab === 'lesson' ? 'active' : ''}`}
               onClick={() => setTab('lesson')}
             >
-              Ders
+              {language === 'en' ? 'Lesson' : 'Ders'}
             </button>
             <button
               role="tab"
@@ -68,7 +75,7 @@ export default function LessonDetail() {
               className={`lesson-tab ${tab === 'quiz' ? 'active' : ''}`}
               onClick={() => setTab('quiz')}
             >
-              Quiz · {questions.length} soru
+              Quiz · {questions.length} {t('questions')}
             </button>
           </div>
         </div>
@@ -103,7 +110,7 @@ export default function LessonDetail() {
                       <p className="example__en">
                         <RichText text={ex.en} />
                       </p>
-                      <p className="example__tr">{ex.tr}</p>
+                      {language === 'tr' && <p className="example__tr">{ex.tr}</p>}
                     </div>
                   ))}
                 </div>
@@ -116,13 +123,15 @@ export default function LessonDetail() {
                   className="btn btn--primary"
                   onClick={() => markLessonCompleted(lesson.id)}
                 >
-                  Bu konuyu tamamlandı olarak işaretle
+                  {language === 'en' ? 'Mark this topic as completed' : 'Bu konuyu tamamlandı olarak işaretle'}
                 </button>
               ) : (
-                <span className="lesson-detail__doneTag">✓ Bu konuyu tamamladın</span>
+                <span className="lesson-detail__doneTag">
+                  ✓ {language === 'en' ? 'You completed this topic' : 'Bu konuyu tamamladın'}
+                </span>
               )}
               <button className="btn btn--ghost" onClick={() => setTab('quiz')}>
-                Quiz’e geç →
+                {language === 'en' ? 'Go to quiz →' : 'Quiz’e geç →'}
               </button>
             </div>
           </>
@@ -135,7 +144,7 @@ export default function LessonDetail() {
         <nav className="lesson-nav">
           {prev ? (
             <Link to={`/ders/${prev.id}`} className="lesson-nav__item">
-              <span>← Önceki</span>
+              <span>{language === 'en' ? '← Previous' : '← Önceki'}</span>
               <strong>{prev.title}</strong>
             </Link>
           ) : (
@@ -143,7 +152,7 @@ export default function LessonDetail() {
           )}
           {next ? (
             <Link to={`/ders/${next.id}`} className="lesson-nav__item lesson-nav__item--next">
-              <span>Sonraki →</span>
+              <span>{language === 'en' ? 'Next →' : 'Sonraki →'}</span>
               <strong>{next.title}</strong>
             </Link>
           ) : (

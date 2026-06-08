@@ -10,19 +10,23 @@ import Progress from './pages/Progress'
 import Mistakes from './pages/Mistakes'
 import PlacementTest from './pages/PlacementTest'
 import { useProgress } from './context/ProgressContext'
+import { useLanguage } from './context/LanguageContext'
 import './App.css'
 
 function LoadingScreen() {
+  const { t } = useLanguage()
+
   return (
     <div className="boot">
       <div className="boot__mark">Li</div>
-      <p className="boot__text">Veri tabanı hazırlanıyor…</p>
+      <p className="boot__text">{t('boot')}</p>
     </div>
   )
 }
 
 export default function App() {
   const { ready } = useProgress()
+  const { t } = useLanguage()
 
   if (!ready) return <LoadingScreen />
 
@@ -45,8 +49,8 @@ export default function App() {
       </main>
       <footer className="site-footer">
         <div className="container">
-          <span>Lingua · İngilizce Dilbilgisi</span>
-          <span>SQLite (WASM) ile yerel ilerleme takibi</span>
+          <span>{t('footerBrand')}</span>
+          <span>{t('footerStorage')}</span>
         </div>
       </footer>
     </>

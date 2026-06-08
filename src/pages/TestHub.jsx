@@ -8,6 +8,13 @@ import {
   getTopicTestQuestions,
 } from '../data'
 import { useProgress } from '../context/ProgressContext'
+import { useLanguage } from '../context/LanguageContext'
+import {
+  localizeLevel,
+  localizeQuestionSet,
+  localizeTopic,
+  localizeTopics,
+} from '../i18n/content'
 import Quiz from '../components/Quiz'
 import './TestHub.css'
 
@@ -16,6 +23,7 @@ const activeLevels = levels.filter((l) => l.active && isLevelReady(l.id))
 export default function TestHub() {
   const [params, setParams] = useSearchParams()
   const { bestScores } = useProgress()
+  const { language, t } = useLanguage()
 
   const levelFromUrl = params.get('level')
   const initialLevel = activeLevels.some((l) => l.id === levelFromUrl)
@@ -31,8 +39,9 @@ export default function TestHub() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [levelFromUrl])
 
-  const topics = useMemo(() => getTopicsByLevel(levelId), [levelId])
-  const level = levels.find((l) => l.id === levelId)
+  const rawTopics = useMemo(() => getTopicsByLevel(levelId), [levelId])
+  const topics = useMemo(() => localizeTopics(rawTopics, language), [rawTopics, language])
+  const level = localizeLevel(levels.find((l) => l.id === levelId), language)
 
   function selectLevel(id) {
     setLevelId(id)
@@ -41,10 +50,11 @@ export default function TestHub() {
   }
 
   function startTopicTest(topic) {
+    const localizedTopic = localizeTopic(topic, language)
     setActive({
       id: `test:${topic.id}`,
-      title: `${level.code} · ${topic.title}`,
-      questions: getTopicTestQuestions(topic),
+      title: `${level.code} · ${localizedTopic.title}`,
+      questions: localizeQuestionSet(getTopicTestQuestions(topic), language),
     })
     window.scrollTo(0, 0)
   }
@@ -53,8 +63,8 @@ export default function TestHub() {
     const questions = getLevelMixedTest(levelId, 20)
     setActive({
       id: `mixtest:${levelId}`,
-      title: `${level.code} · Karışık Test`,
-      questions,
+      title: language === 'en' ? `${level.code} · Mixed Test` : `${level.code} · Karışık Test`,
+      questions: localizeQuestionSet(questions, language),
     })
     window.scrollTo(0, 0)
   }
@@ -63,10 +73,10 @@ export default function TestHub() {
     return (
       <div className="container test-run">
         <button className="test-run__back" onClick={() => setActive(null)}>
-          ← Test seçimine dön
+          {language === 'en' ? '← Back to test selection' : '← Test seçimine dön'}
         </button>
         <header className="test-run__head">
-          <span className="eyebrow">Test · {active.questions.length} soru</span>
+          <span className="eyebrow">Test · {active.questions.length} {t('questions')}</span>
           <h1>{active.title}</h1>
         </header>
         <Quiz
@@ -81,34 +91,41 @@ export default function TestHub() {
   return (
     <div className="container test-hub">
       <header className="test-hub__head">
-        <span className="eyebrow">Sınav Salonu</span>
-        <h1>Test Bankası</h1>
+        <span className="eyebrow">{language === 'en' ? 'Exam Room' : 'Sınav Salonu'}</span>
+        <h1>{language === 'en' ? 'Test Bank' : 'Test Bankası'}</h1>
         <p>
-          Derslerdeki quizlerden ayrı, daha geniş bir soru havuzu. Bir konuyu
-          tek tek test et ya da tüm seviyeyi karışık bir sınavla ölç.
+          {language === 'en'
+            ? 'A wider question pool separate from lesson quizzes. Test one topic at a time or measure a whole level with a mixed exam.'
+            : 'Derslerdeki quizlerden ayrı, daha geniş bir soru havuzu. Bir konuyu tek tek test et ya da tüm seviyeyi karışık bir sınavla ölç.'}
         </p>
       </header>
 
       <div className="test-hub__levels" role="tablist">
-        {activeLevels.map((l) => (
+        {activeLevels.map((rawLevel) => {
+          const l = localizeLevel(rawLevel, language)
+          return (
           <button
-            key={l.id}
+            key={rawLevel.id}
             role="tab"
-            aria-selected={l.id === levelId}
-            className={`level-pill ${l.id === levelId ? 'active' : ''}`}
-            onClick={() => selectLevel(l.id)}
+            aria-selected={rawLevel.id === levelId}
+            className={`level-pill ${rawLevel.id === levelId ? 'active' : ''}`}
+            onClick={() => selectLevel(rawLevel.id)}
           >
             <span className="level-pill__code">{l.code}</span>
             <span className="level-pill__name">{l.name}</span>
           </button>
-        ))}
+        )})}
       </div>
 
       <Link to="/seviye-testi" className="test-placement">
         <div className="test-placement__icon">20</div>
         <div className="test-placement__copy">
-          <strong>Seviyeni Bul</strong>
-          <span>A1’den C2’ye kadar 20 soruluk isteğe bağlı seviye sınavı</span>
+          <strong>{language === 'en' ? 'Find Your Level' : 'Seviyeni Bul'}</strong>
+          <span>
+            {language === 'en'
+              ? 'Optional 20-question placement test from A1 to C2'
+              : 'A1’den C2’ye kadar 20 soruluk isteğe bağlı seviye sınavı'}
+          </span>
         </div>
         <span className="test-placement__arrow" aria-hidden>→</span>
       </Link>
@@ -116,23 +133,28 @@ export default function TestHub() {
       <button className="test-mixed" onClick={startMixedTest}>
         <div className="test-mixed__icon">∑</div>
         <div className="test-mixed__copy">
-          <strong>{level?.code} Karışık Testi</strong>
+          <strong>
+            {language === 'en' ? `${level?.code} Mixed Test` : `${level?.code} Karışık Testi`}
+          </strong>
           <span>
-            {level?.name} seviyesinin tüm konularından karışık 20 soru
+            {language === 'en'
+              ? `20 mixed questions from all ${level?.name} topics`
+              : `${level?.name} seviyesinin tüm konularından karışık 20 soru`}
           </span>
         </div>
         <span className="test-mixed__arrow" aria-hidden>→</span>
       </button>
 
-      <h2 className="test-hub__sub">Konu Testleri</h2>
+      <h2 className="test-hub__sub">{language === 'en' ? 'Topic Tests' : 'Konu Testleri'}</h2>
       <div className="test-grid">
-        {topics.map((topic, i) => {
-          const best = bestScores[`test:${topic.id}`]
+        {rawTopics.map((rawTopic, i) => {
+          const topic = topics[i]
+          const best = bestScores[`test:${rawTopic.id}`]
           return (
             <button
-              key={topic.id}
+              key={rawTopic.id}
               className="test-card"
-              onClick={() => startTopicTest(topic)}
+              onClick={() => startTopicTest(rawTopic)}
               style={{ animationDelay: `${i * 50}ms` }}
             >
               <span className="test-card__badge">{topic.accent}</span>
@@ -142,11 +164,11 @@ export default function TestHub() {
               </div>
               <div className="test-card__meta">
                 <span className="test-card__count">
-                  {getTopicTestQuestions(topic).length} soru
+                  {getTopicTestQuestions(topic).length} {t('questions')}
                 </span>
                 {best && (
                   <span className="test-card__best">
-                    En iyi: {best.score}/{best.total}
+                    {t('best')}: {best.score}/{best.total}
                   </span>
                 )}
               </div>

@@ -6,6 +6,8 @@ import {
   levels,
 } from '../data'
 import { useProgress } from '../context/ProgressContext'
+import { useLanguage } from '../context/LanguageContext'
+import { localizeLevel, localizeQuestionSet } from '../i18n/content'
 import { RichText } from '../utils/richText'
 import './PlacementTest.css'
 
@@ -45,7 +47,12 @@ function scoreByLevel(answers) {
 }
 
 export default function PlacementTest() {
-  const questions = useMemo(() => getPlacementTestQuestions(), [])
+  const { language, t } = useLanguage()
+  const rawQuestions = useMemo(() => getPlacementTestQuestions(), [])
+  const questions = useMemo(
+    () => localizeQuestionSet(rawQuestions, language),
+    [rawQuestions, language]
+  )
   const { saveQuizResult } = useProgress()
   const [started, setStarted] = useState(false)
   const [current, setCurrent] = useState(0)
@@ -103,26 +110,35 @@ export default function PlacementTest() {
       <div className="container placement-page">
         <section className="placement-intro">
           <div className="placement-intro__copy">
-            <span className="eyebrow">Seviye Sınavı</span>
-            <h1>Başlamak için en doğru seviyeyi bul.</h1>
+            <span className="eyebrow">{language === 'en' ? 'Placement Test' : 'Seviye Sınavı'}</span>
+            <h1>
+              {language === 'en'
+                ? 'Find the right level to start from.'
+                : 'Başlamak için en doğru seviyeyi bul.'}
+            </h1>
             <p>
-              Bu test mecburi değil. İstersen 20 soruda genel seviyeni ölç,
-              sonra önerilen seviyeden çalışmaya başla.
+              {language === 'en'
+                ? 'This test is optional. Measure your general level in 20 questions, then start from the recommended level.'
+                : 'Bu test mecburi değil. İstersen 20 soruda genel seviyeni ölç, sonra önerilen seviyeden çalışmaya başla.'}
             </p>
             <div className="placement-intro__actions">
               <button className="btn btn--primary" onClick={() => setStarted(true)}>
-                20 Soruluk Teste Başla
+                {language === 'en' ? 'Start 20-Question Test' : '20 Soruluk Teste Başla'}
               </button>
               <Link to="/seviyeler" className="btn btn--ghost">
-                Seviyeleri Gör
+                {language === 'en' ? 'View Levels' : 'Seviyeleri Gör'}
               </Link>
             </div>
           </div>
 
           <div className="placement-intro__panel">
             <strong>20</strong>
-            <span>soru</span>
-            <p>A1’den C2’ye kadar karışık ama kademeli ölçüm.</p>
+            <span>{t('questions')}</span>
+            <p>
+              {language === 'en'
+                ? 'A mixed but gradual measurement from A1 to C2.'
+                : 'A1’den C2’ye kadar karışık ama kademeli ölçüm.'}
+            </p>
           </div>
         </section>
       </div>
@@ -133,6 +149,7 @@ export default function PlacementTest() {
     const pct = total ? Math.round((score / total) * 100) : 0
     const recommendation = getPlacementRecommendation(score, total)
     const breakdown = scoreByLevel(answers.filter(Boolean))
+    const recommendedLevel = localizeLevel(recommendation.level, language)
 
     return (
       <div className="container placement-result">
@@ -143,31 +160,35 @@ export default function PlacementTest() {
           >
             <span className="quiz-result__pct">{pct}%</span>
           </div>
-          <span className="eyebrow">Önerilen başlangıç</span>
-          <h1>{recommendation.title}</h1>
+          <span className="eyebrow">
+            {language === 'en' ? 'Recommended starting point' : 'Önerilen başlangıç'}
+          </span>
+          <h1>{recommendedLevel.code} {recommendedLevel.name}</h1>
           <p>
-            {score} / {total} doğru yaptın. Bu sonuç başlangıç noktanı seçmek
-            için kullanılır; istersen daha kolay ya da daha zor seviyeden de
-            devam edebilirsin.
+            {language === 'en'
+              ? `You answered ${score} / ${total} correctly. Use this result as a starting point; you can still choose an easier or harder level if you prefer.`
+              : `${score} / ${total} doğru yaptın. Bu sonuç başlangıç noktanı seçmek için kullanılır; istersen daha kolay ya da daha zor seviyeden de devam edebilirsin.`}
           </p>
 
           <div className="placement-breakdown">
-            {breakdown.map(({ level, correct, total: levelTotal }) => (
-              <div key={level.id} className="placement-breakdown__row">
-                <span>{level.code}</span>
+            {breakdown.map(({ level, correct, total: levelTotal }) => {
+              const displayLevel = localizeLevel(level, language)
+              return (
+              <div key={displayLevel.id} className="placement-breakdown__row">
+                <span>{displayLevel.code}</span>
                 <strong>
                   {correct}/{levelTotal}
                 </strong>
               </div>
-            ))}
+            )})}
           </div>
 
           <div className="placement-result__actions">
             <Link to={recommendation.path} className="btn btn--primary">
-              Bu Seviyeden Başla
+              {language === 'en' ? 'Start From This Level' : 'Bu Seviyeden Başla'}
             </Link>
             <button className="btn btn--ghost" onClick={restart}>
-              Testi Tekrar Çöz
+              {language === 'en' ? 'Retake Test' : 'Testi Tekrar Çöz'}
             </button>
           </div>
         </section>
@@ -178,11 +199,13 @@ export default function PlacementTest() {
   return (
     <div className="container placement-run">
       <button className="placement-run__back" onClick={() => setStarted(false)}>
-        ← Girişe dön
+        {language === 'en' ? '← Back to intro' : '← Girişe dön'}
       </button>
       <header className="placement-run__head">
-        <span className="eyebrow">Seviye Sınavı · {total} soru</span>
-        <h1>Soru {current + 1}</h1>
+        <span className="eyebrow">
+          {language === 'en' ? 'Placement Test' : 'Seviye Sınavı'} · {total} {t('questions')}
+        </span>
+        <h1>{t('question')} {current + 1}</h1>
       </header>
 
       <div className="quiz">
@@ -192,7 +215,7 @@ export default function PlacementTest() {
 
         <div className="quiz__head">
           <span className="quiz__count">
-            Soru {current + 1} / {total}
+            {t('question')} {current + 1} / {total}
           </span>
           <span className="quiz__score">{q.levelCode}</span>
         </div>
@@ -228,14 +251,14 @@ export default function PlacementTest() {
 
         {locked && (
           <div className="quiz__explain">
-            <strong>{selected === q.answer ? 'Doğru! ' : 'Açıklama: '}</strong>
+            <strong>{selected === q.answer ? t('correctFeedback') : t('explanation')}</strong>
             {q.explain}
           </div>
         )}
 
         <div className="quiz__actions">
           <button className="btn btn--primary" onClick={next} disabled={!locked}>
-            {current + 1 < total ? 'Sonraki Soru' : 'Sonucu Gör'}
+            {current + 1 < total ? t('nextQuestion') : t('seeResult')}
           </button>
         </div>
       </div>

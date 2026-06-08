@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useProgress } from '../context/ProgressContext'
+import { useLanguage } from '../context/LanguageContext'
 import { RichText } from '../utils/richText'
 import './Quiz.css'
 
@@ -28,6 +29,7 @@ function buildAnswerRecord(topicId, question, selectedIndex) {
 
 export default function Quiz({ topicId, questions }) {
   const { saveQuizResult } = useProgress()
+  const { t } = useLanguage()
   const [current, setCurrent] = useState(0)
   const [selected, setSelected] = useState(null)
   const [locked, setLocked] = useState(false)
@@ -86,10 +88,10 @@ export default function Quiz({ topicId, questions }) {
     const tone = pct >= 80 ? 'great' : pct >= 50 ? 'ok' : 'low'
     const message =
       tone === 'great'
-        ? 'Mükemmel! Bu konuya hâkimsin.'
+        ? t('resultGreat')
         : tone === 'ok'
-        ? 'İyi gidiyor — birkaç noktayı tekrar et.'
-        : 'Sorun değil, dersi tekrar gözden geçir ve yeniden dene.'
+        ? t('resultOk')
+        : t('resultLow')
 
     return (
       <div className="quiz quiz--result">
@@ -100,11 +102,11 @@ export default function Quiz({ topicId, questions }) {
           <span className="quiz-result__pct">{pct}%</span>
         </div>
         <h3 className="quiz-result__score">
-          {score} / {total} doğru
+          {score} / {total} {t('correct')}
         </h3>
         <p className="quiz-result__msg">{message}</p>
         <button className="btn btn--primary" onClick={restart}>
-          Tekrar Dene
+          {t('retry')}
         </button>
       </div>
     )
@@ -118,9 +120,9 @@ export default function Quiz({ topicId, questions }) {
 
       <div className="quiz__head">
         <span className="quiz__count">
-          Soru {current + 1} / {total}
+          {t('question')} {current + 1} / {total}
         </span>
-        <span className="quiz__score">Skor: {score}</span>
+        <span className="quiz__score">{t('score')}: {score}</span>
       </div>
 
       <p className="quiz__prompt">
@@ -153,14 +155,14 @@ export default function Quiz({ topicId, questions }) {
 
       {locked && (
         <div className="quiz__explain">
-          <strong>{selected === q.answer ? 'Doğru! ' : 'Açıklama: '}</strong>
+          <strong>{selected === q.answer ? t('correctFeedback') : t('explanation')}</strong>
           {q.explain}
         </div>
       )}
 
       <div className="quiz__actions">
         <button className="btn btn--primary" onClick={next} disabled={!locked}>
-          {current + 1 < total ? 'Sonraki Soru' : 'Sonucu Gör'}
+          {current + 1 < total ? t('nextQuestion') : t('seeResult')}
         </button>
       </div>
     </div>

@@ -2,28 +2,33 @@ import { Link, useParams } from 'react-router-dom'
 import { getLevel } from '../data/levels'
 import { getTopicsByLevel, isLevelReady } from '../data'
 import { useProgress } from '../context/ProgressContext'
+import { useLanguage } from '../context/LanguageContext'
+import { localizeLevel, localizeTopics } from '../i18n/content'
 import LessonCard from '../components/LessonCard'
 import './LevelPage.css'
 
 export default function LevelPage() {
   const { id } = useParams()
-  const level = getLevel(id)
+  const rawLevel = getLevel(id)
   const { completed } = useProgress()
-  const topics = getTopicsByLevel(id)
+  const { language, t } = useLanguage()
+  const rawTopics = getTopicsByLevel(id)
+  const level = localizeLevel(rawLevel, language)
+  const topics = localizeTopics(rawTopics, language)
 
-  if (!level || !isLevelReady(id)) {
+  if (!rawLevel || !isLevelReady(id)) {
     return (
       <div className="container level-page__missing">
-        <h1>Seviye bulunamadı</h1>
+        <h1>{language === 'en' ? 'Level not found' : 'Seviye bulunamadı'}</h1>
         <Link to="/seviyeler" className="btn btn--primary">
-          Seviyelere dön
+          {language === 'en' ? 'Back to levels' : 'Seviyelere dön'}
         </Link>
       </div>
     )
   }
 
-  const doneCount = topics.filter((t) => completed[t.id]).length
-  const totalExamples = topics.reduce(
+  const doneCount = rawTopics.filter((topic) => completed[topic.id]).length
+  const totalExamples = rawTopics.reduce(
     (n, t) => n + t.sections.reduce((m, s) => m + s.examples.length, 0),
     0
   )
@@ -33,7 +38,7 @@ export default function LevelPage() {
       <header className="level-hero">
         <div className="container level-hero__inner">
           <Link to="/seviyeler" className="level-hero__back">
-            ← Seviyeler
+            ← {t('navLevels')}
           </Link>
           <div className="level-hero__main">
             <span className="level-hero__code">{level.code}</span>
@@ -46,21 +51,21 @@ export default function LevelPage() {
 
           <div className="level-hero__stats">
             <span>
-              <strong>{topics.length}</strong> konu
+              <strong>{topics.length}</strong> {t('topics')}
             </span>
             <span>
-              <strong>{totalExamples}+</strong> örnek
+              <strong>{totalExamples}+</strong> {t('examples')}
             </span>
             <span>
               <strong>
                 {doneCount}/{topics.length}
               </strong>{' '}
-              tamamlandı
+              {t('completed').toLocaleLowerCase(language === 'tr' ? 'tr-TR' : 'en-US')}
             </span>
           </div>
 
           <Link to={`/test?level=${level.id}`} className="btn btn--primary level-hero__test">
-            {level.code} Karışık Testini Çöz →
+            {language === 'en' ? `Take ${level.code} Mixed Test →` : `${level.code} Karışık Testini Çöz →`}
           </Link>
         </div>
       </header>

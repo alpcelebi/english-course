@@ -1,21 +1,24 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import ThemeToggle from './ThemeToggle'
+import LanguageToggle from './LanguageToggle'
 import TopicSearch from './TopicSearch'
+import { useLanguage } from '../context/LanguageContext'
 import './Header.css'
 
 const NAV = [
-  { to: '/', label: 'Ana Sayfa', end: true },
-  { to: '/seviyeler', label: 'Seviyeler' },
-  { to: '/test', label: 'Test' },
-  { to: '/yanlislar', label: 'Yanlışlar' },
-  { to: '/ilerleme', label: 'İlerleme' },
+  { to: '/', labelKey: 'navHome', end: true },
+  { to: '/seviyeler', labelKey: 'navLevels' },
+  { to: '/test', labelKey: 'navTest' },
+  { to: '/yanlislar', labelKey: 'navMistakes' },
+  { to: '/ilerleme', labelKey: 'navProgress' },
 ]
 
 export default function Header() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
   const navRef = useRef(null)
+  const { language, t } = useLanguage()
 
   // Close the dropdown whenever the route changes.
   useEffect(() => {
@@ -42,11 +45,15 @@ export default function Header() {
   return (
     <header className="site-header">
       <div className="container site-header__inner">
-        <Link to="/" className="brand" aria-label="Lingua ana sayfa">
+        <Link
+          to="/"
+          className="brand"
+          aria-label={language === 'en' ? 'Lingua home' : 'Lingua ana sayfa'}
+        >
           <span className="brand__mark">Li</span>
           <span className="brand__text">
             Lingua
-            <em>İngilizce Dilbilgisi</em>
+            <em>{t('brandSub')}</em>
           </span>
         </Link>
 
@@ -56,7 +63,7 @@ export default function Header() {
           <nav
             id="primary-nav"
             className={`site-nav ${open ? 'is-open' : ''}`}
-            aria-label="Ana menü"
+            aria-label={t('navAria')}
           >
             <TopicSearch className="topic-search--mobile" />
 
@@ -68,17 +75,18 @@ export default function Header() {
                 className="site-nav__link"
                 onClick={() => setOpen(false)}
               >
-                {item.label}
+                {t(item.labelKey)}
               </NavLink>
             ))}
           </nav>
 
+          <LanguageToggle />
           <ThemeToggle />
 
           <button
             type="button"
             className={`nav-toggle ${open ? 'is-open' : ''}`}
-            aria-label={open ? 'Menüyü kapat' : 'Menüyü aç'}
+            aria-label={open ? t('menuClose') : t('menuOpen')}
             aria-expanded={open}
             aria-controls="primary-nav"
             onClick={() => setOpen((v) => !v)}

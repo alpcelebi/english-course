@@ -2,26 +2,31 @@ import { Link } from 'react-router-dom'
 import { levels } from '../data/levels'
 import { getTopicsByLevel, isLevelReady } from '../data'
 import { useProgress } from '../context/ProgressContext'
+import { useLanguage } from '../context/LanguageContext'
+import { localizeLevel } from '../i18n/content'
 import './Levels.css'
 
 export default function Levels() {
   const { completed } = useProgress()
+  const { language, t } = useLanguage()
 
   return (
     <div className="container levels-page">
       <header className="levels-page__head">
-        <span className="eyebrow">CEFR Müfredatı</span>
-        <h1>Seviyeler</h1>
+        <span className="eyebrow">{language === 'en' ? 'CEFR Curriculum' : 'CEFR Müfredatı'}</span>
+        <h1>{t('navLevels')}</h1>
         <p>
-          Avrupa Dil Ölçeği’ne (A1’den C2’ye) göre düzenlenmiş konular. Her
-          seviyede dersler, quizler ve ayrı bir test bankası seni bekliyor.
+          {language === 'en'
+            ? 'Grammar topics organized by the CEFR scale from A1 to C2. Each level includes lessons, quizzes, and a separate test bank.'
+            : 'Avrupa Dil Ölçeği’ne (A1’den C2’ye) göre düzenlenmiş konular. Her seviyede dersler, quizler ve ayrı bir test bankası seni bekliyor.'}
         </p>
       </header>
 
       <div className="levels-grid">
-        {levels.map((level, i) => {
-          const ready = isLevelReady(level.id) && level.active
-          const topics = getTopicsByLevel(level.id)
+        {levels.map((rawLevel, i) => {
+          const level = localizeLevel(rawLevel, language)
+          const ready = isLevelReady(rawLevel.id) && rawLevel.active
+          const topics = getTopicsByLevel(rawLevel.id)
           const doneCount = topics.filter((t) => completed[t.id]).length
           const pct = topics.length
             ? Math.round((doneCount / topics.length) * 100)
@@ -32,7 +37,7 @@ export default function Levels() {
 
           return (
             <Card
-              key={level.id}
+              key={rawLevel.id}
               {...cardProps}
               className={`level-card ${ready ? '' : 'level-card--soon'}`}
               style={{ animationDelay: `${i * 60}ms` }}
@@ -48,7 +53,7 @@ export default function Levels() {
                 {ready ? (
                   <>
                     <span className="level-card__count">
-                      {topics.length} konu
+                      {topics.length} {t('topics')}
                     </span>
                     <div className="level-card__bar" aria-hidden>
                       <span style={{ width: `${pct}%` }} />
@@ -56,7 +61,7 @@ export default function Levels() {
                     <span className="level-card__pct">{pct}%</span>
                   </>
                 ) : (
-                  <span className="level-card__soon">Yakında</span>
+                  <span className="level-card__soon">{t('soon')}</span>
                 )}
               </div>
             </Card>

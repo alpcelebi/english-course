@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { allTopics, levels } from '../data'
+import { useLanguage } from '../context/LanguageContext'
+import { localizeLevel, localizeTopic } from '../i18n/content'
 import './TopicSearch.css'
 
 const MIN_QUERY_LENGTH = 2
@@ -75,33 +77,37 @@ export default function TopicSearch({ className = '' }) {
   const rootRef = useRef(null)
   const location = useLocation()
   const navigate = useNavigate()
+  const { language, t } = useLanguage()
 
   const searchIndex = useMemo(() => {
-    const levelById = new Map(levels.map((level) => [level.id, level]))
+    const levelById = new Map(
+      levels.map((level) => [level.id, localizeLevel(level, language)])
+    )
 
     return allTopics.map((topic) => {
-      const level = levelById.get(topic.level)
+      const localizedTopic = localizeTopic(topic, language)
+      const level = levelById.get(localizedTopic.level)
       const levelLabel = level ? `${level.code} ${level.name} ${level.tag}` : topic.level
 
       const baseText = [
-        topic.title,
-        topic.subtitle,
-        topic.summary,
-        topic.keywords?.join(' '),
+        localizedTopic.title,
+        localizedTopic.subtitle,
+        localizedTopic.summary,
+        localizedTopic.keywords?.join(' '),
         levelLabel,
-        topic.sections?.map((section) => `${section.heading} ${section.subheading}`).join(' '),
+        localizedTopic.sections?.map((section) => `${section.heading} ${section.subheading}`).join(' '),
       ].join(' ')
       const normalizedBaseText = normalizeSearch(baseText)
 
       return {
-        ...topic,
-        levelCode: level?.code ?? topic.level.toUpperCase(),
+        ...localizedTopic,
+        levelCode: level?.code ?? localizedTopic.level.toUpperCase(),
         searchable: normalizeSearch(
           `${baseText} ${aliasKeywordsFor(normalizedBaseText)}`
         ),
       }
     })
-  }, [])
+  }, [language])
 
   const results = useMemo(() => {
     const normalizedQuery = normalizeSearch(query.trim())
@@ -153,8 +159,8 @@ export default function TopicSearch({ className = '' }) {
         <input
           type="search"
           value={query}
-          placeholder="Konu ara"
-          aria-label="Konu ara"
+          placeholder={t('searchPlaceholder')}
+          aria-label={t('searchAria')}
           autoComplete="off"
           onChange={(event) => {
             setQuery(event.target.value)
@@ -167,7 +173,7 @@ export default function TopicSearch({ className = '' }) {
           <button
             type="button"
             className="topic-search__clear"
-            aria-label="Aramayı temizle"
+            aria-label={t('clearSearch')}
             onClick={() => {
               setQuery('')
               setOpen(false)
@@ -179,7 +185,7 @@ export default function TopicSearch({ className = '' }) {
       </label>
 
       {showPanel && (
-        <div className="topic-search__panel" role="listbox" aria-label="Arama sonuçları">
+        <div className="topic-search__panel" role="listbox" aria-label={t('searchResults')}>
           {results.length ? (
             results.map((topic) => (
               <Link
@@ -188,13 +194,13 @@ export default function TopicSearch({ className = '' }) {
                 className="topic-search__result"
                 role="option"
               >
-                <span className="topic-search__meta">{topic.levelCode} · Ünite {topic.order}</span>
+                <span className="topic-search__meta">{topic.levelCode} · {t('unit')} {topic.order}</span>
                 <strong>{topic.title}</strong>
                 <span>{topic.subtitle}</span>
               </Link>
             ))
           ) : (
-            <div className="topic-search__empty">Konu bulunamadı</div>
+            <div className="topic-search__empty">{t('noTopicFound')}</div>
           )}
         </div>
       )}

@@ -1,0 +1,36 @@
+.language-toggle {
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-faint);
+}
+
+.language-toggle span {
+  min-width: 34px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.language-toggle .is-active {
+  background: var(--accent-tint);
+  color: var(--accent-strong);
+}
+
+@media (max-width: 420px) {
+  .language-toggle span {
+    min-width: 30px;
+  }
+}
