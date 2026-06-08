@@ -11,8 +11,21 @@ import b1 from './curriculum/b1'
 import b2 from './curriculum/b2'
 import c1 from './curriculum/c1'
 import c2 from './curriculum/c2'
+import extra from './curriculum/extra'
 
-const byLevel = { a1, a2, b1, b2, c1, c2 }
+const byLevel = {
+  a1: [...a1, ...extra.a1],
+  a2: [...a2, ...extra.a2],
+  b1: [...b1, ...extra.b1],
+  b2: [...b2, ...extra.b2],
+  c1: [...c1, ...extra.c1],
+  c2: [...c2, ...extra.c2],
+}
+
+export const getTopicTestQuestions = (topic) => {
+  if (!topic) return []
+  return topic.test?.length ? topic.test : topic.quiz ?? []
+}
 
 /** Flat list of every authored topic, in level → order sequence. */
 export const allTopics = levels
@@ -35,7 +48,7 @@ export const getLesson = getTopic
 export const getQuiz = (id) => getTopic(id)?.quiz ?? []
 
 /** Distinct test-bank questions for a topic. */
-export const getTest = (id) => getTopic(id)?.test ?? []
+export const getTest = (id) => getTopicTestQuestions(getTopic(id))
 
 /** Sibling topics within the same level (for prev/next navigation). */
 export const getLevelSiblings = (id) => {
@@ -59,7 +72,11 @@ function shuffle(arr) {
  */
 export const getLevelMixedTest = (levelId, limit = 20) => {
   const pool = getTopicsByLevel(levelId).flatMap((t) =>
-    t.test.map((q) => ({ ...q, topicId: t.id, topicTitle: t.title }))
+    getTopicTestQuestions(t).map((q) => ({
+      ...q,
+      topicId: t.id,
+      topicTitle: t.title,
+    }))
   )
   return shuffle(pool).slice(0, limit)
 }

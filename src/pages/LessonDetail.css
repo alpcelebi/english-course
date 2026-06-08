@@ -77,7 +77,7 @@
   border-color: var(--border);
 }
 
-.lesson-detail__body {
+.container.lesson-detail__body {
   padding: 40px 24px 0;
 }
 
@@ -277,6 +277,9 @@
 @media (max-width: 640px) {
   .lesson-detail__heading { gap: 14px; }
   .lesson-detail__badge { width: 52px; height: 52px; font-size: 24px; }
+  .container.lesson-detail__body {
+    padding-top: 48px;
+  }
   .lesson-nav { flex-direction: column; }
   .lesson-nav__item { max-width: 100%; }
 }

@@ -5,6 +5,7 @@ import {
   getTopicsByLevel,
   isLevelReady,
   getLevelMixedTest,
+  getTopicTestQuestions,
 } from '../data'
 import { useProgress } from '../context/ProgressContext'
 import Quiz from '../components/Quiz'
@@ -43,7 +44,7 @@ export default function TestHub() {
     setActive({
       id: `test:${topic.id}`,
       title: `${level.code} · ${topic.title}`,
-      questions: topic.test,
+      questions: getTopicTestQuestions(topic),
     })
     window.scrollTo(0, 0)
   }
@@ -131,7 +132,9 @@ export default function TestHub() {
                 <span className="test-card__sub">{topic.subtitle}</span>
               </div>
               <div className="test-card__meta">
-                <span className="test-card__count">{topic.test.length} soru</span>
+                <span className="test-card__count">
+                  {getTopicTestQuestions(topic).length} soru
+                </span>
                 {best && (
                   <span className="test-card__best">
                     En iyi: {best.score}/{best.total}
