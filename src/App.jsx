@@ -50,7 +50,10 @@ export default function App() {
       <footer className="site-footer">
         <div className="container">
           <span>{t('footerBrand')}</span>
-          <span>{t('footerStorage')}</span>
+          <span className="site-footer__credit">
+            {t('footerCreditLead')} <strong>Alp Eren ÇELEBİ</strong>
+            <em>{t('footerCreditYear')}</em>
+          </span>
         </div>
       </footer>
     </>

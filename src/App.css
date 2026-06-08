@@ -11,11 +11,44 @@ main {
 .site-footer .container {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 12px;
   font-size: 0.82rem;
   color: var(--text-faint);
   font-family: var(--font-mono);
+}
+
+.site-footer__credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-soft);
+}
+
+.site-footer__credit strong {
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.site-footer__credit em {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--accent-strong);
+  font-style: normal;
+  font-size: 0.72rem;
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 560px) {
+  .site-footer .container {
+    justify-content: center;
+    text-align: center;
+  }
 }
 
 .boot {
