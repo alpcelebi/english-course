@@ -5,12 +5,34 @@ import './Quiz.css'
 
 const LETTERS = ['A', 'B', 'C', 'D']
 
+function sourceTopicIdFrom(topicId, question) {
+  if (question.topicId) return question.topicId
+  return topicId.replace(/^test:/, '')
+}
+
+function buildAnswerRecord(topicId, question, selectedIndex) {
+  const correct = selectedIndex === question.answer
+  const sourceTopicId = sourceTopicIdFrom(topicId, question)
+
+  return {
+    correct,
+    sourceTopicId,
+    sourceTitle: question.topicTitle,
+    questionKey: String(question.prompt),
+    prompt: question.prompt,
+    selectedAnswer: question.options[selectedIndex],
+    correctAnswer: question.options[question.answer],
+    explanation: question.explain,
+  }
+}
+
 export default function Quiz({ topicId, questions }) {
   const { saveQuizResult } = useProgress()
   const [current, setCurrent] = useState(0)
   const [selected, setSelected] = useState(null)
   const [locked, setLocked] = useState(false)
   const [score, setScore] = useState(0)
+  const [answers, setAnswers] = useState([])
   const [finished, setFinished] = useState(false)
   const [savedKey, setSavedKey] = useState(null)
 
@@ -25,10 +47,15 @@ export default function Quiz({ topicId, questions }) {
     if (locked) return
     setSelected(idx)
     setLocked(true)
+    setAnswers((prev) => {
+      const nextAnswers = [...prev]
+      nextAnswers[current] = buildAnswerRecord(topicId, q, idx)
+      return nextAnswers
+    })
     if (idx === q.answer) setScore((s) => s + 1)
   }
 
-  function next() {
+  async function next() {
     if (current + 1 < total) {
       setCurrent((c) => c + 1)
       setSelected(null)
@@ -38,8 +65,8 @@ export default function Quiz({ topicId, questions }) {
       // Persist the final score once.
       const key = `${topicId}-${score}`
       if (savedKey !== key) {
-        saveQuizResult(topicId, score, total)
         setSavedKey(key)
+        await saveQuizResult(topicId, score, total, answers.filter(Boolean))
       }
     }
   }
@@ -49,6 +76,7 @@ export default function Quiz({ topicId, questions }) {
     setSelected(null)
     setLocked(false)
     setScore(0)
+    setAnswers([])
     setFinished(false)
     setSavedKey(null)
   }

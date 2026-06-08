@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { levels } from '../data/levels'
 import {
   getTopicsByLevel,
@@ -103,6 +103,15 @@ export default function TestHub() {
           </button>
         ))}
       </div>
+
+      <Link to="/seviye-testi" className="test-placement">
+        <div className="test-placement__icon">20</div>
+        <div className="test-placement__copy">
+          <strong>Seviyeni Bul</strong>
+          <span>A1’den C2’ye kadar 20 soruluk isteğe bağlı seviye sınavı</span>
+        </div>
+        <span className="test-placement__arrow" aria-hidden>→</span>
+      </Link>
 
       <button className="test-mixed" onClick={startMixedTest}>
         <div className="test-mixed__icon">∑</div>

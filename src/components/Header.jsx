@@ -8,6 +8,7 @@ const NAV = [
   { to: '/', label: 'Ana Sayfa', end: true },
   { to: '/seviyeler', label: 'Seviyeler' },
   { to: '/test', label: 'Test' },
+  { to: '/yanlislar', label: 'Yanlışlar' },
   { to: '/ilerleme', label: 'İlerleme' },
 ]
 

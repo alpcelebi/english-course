@@ -27,6 +27,43 @@ export const getTopicTestQuestions = (topic) => {
   return topic.test?.length ? topic.test : topic.quiz ?? []
 }
 
+const placementQuotas = {
+  a1: 4,
+  a2: 4,
+  b1: 4,
+  b2: 4,
+  c1: 2,
+  c2: 2,
+}
+
+function withQuestionSource(question, topic) {
+  const level = getLevel(topic.level)
+
+  return {
+    ...question,
+    topicId: topic.id,
+    topicTitle: topic.title,
+    levelId: topic.level,
+    levelCode: level?.code ?? topic.level.toUpperCase(),
+  }
+}
+
+function takeDistributedQuestions(topics, quota) {
+  const selected = []
+  let questionOffset = 0
+
+  while (selected.length < quota && questionOffset < 10) {
+    for (const topic of topics) {
+      const question = getTopicTestQuestions(topic)[questionOffset]
+      if (question) selected.push(withQuestionSource(question, topic))
+      if (selected.length === quota) break
+    }
+    questionOffset += 1
+  }
+
+  return selected
+}
+
 /** Flat list of every authored topic, in level → order sequence. */
 export const allTopics = levels
   .filter((l) => byLevel[l.id])
@@ -72,13 +109,41 @@ function shuffle(arr) {
  */
 export const getLevelMixedTest = (levelId, limit = 20) => {
   const pool = getTopicsByLevel(levelId).flatMap((t) =>
-    getTopicTestQuestions(t).map((q) => ({
-      ...q,
-      topicId: t.id,
-      topicTitle: t.title,
-    }))
+    getTopicTestQuestions(t).map((q) => withQuestionSource(q, t))
   )
   return shuffle(pool).slice(0, limit)
+}
+
+export const getPlacementTestQuestions = () =>
+  levels
+    .filter((l) => l.active && byLevel[l.id])
+    .flatMap((level) =>
+      takeDistributedQuestions(byLevel[level.id], placementQuotas[level.id] ?? 3)
+    )
+    .slice(0, 20)
+
+export const getPlacementRecommendation = (score, total = 20) => {
+  const pct = total ? score / total : 0
+  const recommendedId =
+    pct <= 0.25
+      ? 'a1'
+      : pct <= 0.4
+      ? 'a2'
+      : pct <= 0.6
+      ? 'b1'
+      : pct <= 0.75
+      ? 'b2'
+      : pct <= 0.9
+      ? 'c1'
+      : 'c2'
+
+  const level = getLevel(recommendedId)
+
+  return {
+    level,
+    title: `${level.code} ${level.name}`,
+    path: `/seviye/${level.id}`,
+  }
 }
 
 export { levels, getLevel }

@@ -5,7 +5,7 @@ import { useProgress } from '../context/ProgressContext'
 import './Progress.css'
 
 export default function Progress() {
-  const { completed, bestScores, resetProgress } = useProgress()
+  const { completed, bestScores, mistakes, resetProgress } = useProgress()
 
   const doneCount = allTopics.filter((t) => completed[t.id]).length
   const overallPct = allTopics.length
@@ -47,6 +47,10 @@ export default function Progress() {
           <span className="progress-mini__num">{quizzesTaken}</span>
           <span className="progress-mini__label">Çözülen quiz</span>
         </div>
+        <Link to="/yanlislar" className="progress-mini">
+          <span className="progress-mini__num">{mistakes.length}</span>
+          <span className="progress-mini__label">Aktif yanlış</span>
+        </Link>
       </div>
 
       {readyLevels.map((level) => {

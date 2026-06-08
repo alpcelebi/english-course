@@ -60,6 +60,65 @@
   font-size: 0.9rem;
 }
 
+.test-placement {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  text-align: left;
+  padding: 20px 22px;
+  margin-bottom: 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease),
+    border-color 0.22s var(--ease);
+}
+
+.test-placement:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+  border-color: var(--accent);
+}
+
+.test-placement__icon {
+  width: 52px;
+  height: 52px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  background: var(--accent-tint);
+  color: var(--accent-strong);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.35rem;
+}
+
+.test-placement__copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.test-placement__copy strong {
+  font-family: var(--font-display);
+  font-size: 1.22rem;
+}
+
+.test-placement__copy span {
+  color: var(--text-soft);
+  font-size: 0.95rem;
+}
+
+.test-placement__arrow {
+  color: var(--accent-strong);
+  font-size: 1.3rem;
+}
+
 /* Mixed test banner */
 .test-mixed {
   width: 100%;

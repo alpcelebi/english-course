@@ -7,6 +7,8 @@ import LessonsList from './pages/LessonsList'
 import LessonDetail from './pages/LessonDetail'
 import TestHub from './pages/TestHub'
 import Progress from './pages/Progress'
+import Mistakes from './pages/Mistakes'
+import PlacementTest from './pages/PlacementTest'
 import { useProgress } from './context/ProgressContext'
 import './App.css'
 
@@ -35,6 +37,8 @@ export default function App() {
           <Route path="/dersler" element={<LessonsList />} />
           <Route path="/ders/:id" element={<LessonDetail />} />
           <Route path="/test" element={<TestHub />} />
+          <Route path="/seviye-testi" element={<PlacementTest />} />
+          <Route path="/yanlislar" element={<Mistakes />} />
           <Route path="/ilerleme" element={<Progress />} />
           <Route path="*" element={<Home />} />
         </Routes>

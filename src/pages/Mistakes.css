@@ -1,0 +1,228 @@
+.mistakes-page {
+  padding: 54px 24px 80px;
+}
+
+.mistakes-page__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+
+.mistakes-page__head h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin: 10px 0 14px;
+}
+
+.mistakes-page__head p {
+  max-width: 62ch;
+  color: var(--text-soft);
+  font-size: 1.05rem;
+}
+
+.mistakes-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 20px;
+  margin-bottom: 26px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.mistakes-summary div {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.mistakes-summary strong {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--accent-strong);
+}
+
+.mistakes-summary span,
+.mistakes-summary a {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.mistakes-summary a {
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+.mistake-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+.mistake-card {
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  animation: rise 0.45s var(--ease) both;
+}
+
+.mistake-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.mistake-card__meta,
+.mistake-card__attempts,
+.mistake-card__answers span {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.mistake-card__top h2 {
+  font-size: 1.35rem;
+  margin-top: 4px;
+}
+
+.mistake-card__attempts {
+  flex: none;
+  padding: 5px 10px;
+  border-radius: 999px;
+  color: var(--accent-strong);
+  background: var(--accent-tint);
+}
+
+.mistake-card__prompt {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  line-height: 1.4;
+  margin-bottom: 18px;
+}
+
+.mistake-card__prompt .rt-strong {
+  color: var(--accent-strong);
+}
+
+.mistake-card__answers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mistake-card__answers div {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.mistake-card__answers strong {
+  display: block;
+  margin-top: 6px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.mistake-card__answers div:first-child strong {
+  color: var(--bad);
+}
+
+.mistake-card__answers div:last-child strong {
+  color: var(--good);
+}
+
+.mistake-card__explain {
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--accent-tint);
+  color: var(--text-soft);
+  font-size: 0.94rem;
+}
+
+.mistake-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mistakes-empty {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 56px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.mistakes-empty__mark {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: var(--good-tint);
+  color: var(--good);
+  font-weight: 800;
+  font-size: 1.5rem;
+}
+
+.mistakes-empty h2 {
+  font-size: 1.8rem;
+}
+
+.mistakes-empty p {
+  color: var(--text-soft);
+}
+
+.mistakes-empty__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+@media (max-width: 640px) {
+  .mistakes-page {
+    padding-top: 40px;
+  }
+
+  .mistakes-page__head {
+    flex-direction: column;
+  }
+
+  .mistake-list {
+    grid-template-columns: 1fr;
+  }
+
+  .mistake-card {
+    padding: 20px;
+  }
+
+  .mistake-card__answers {
+    grid-template-columns: 1fr;
+  }
+}

@@ -24,6 +24,21 @@ const SCHEMA = `
     taken_at  TEXT NOT NULL
   );
 
+  CREATE TABLE IF NOT EXISTS quiz_mistakes (
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic_id       TEXT NOT NULL,
+    question_key   TEXT NOT NULL,
+    prompt         TEXT NOT NULL,
+    selected_answer TEXT NOT NULL,
+    correct_answer TEXT NOT NULL,
+    explanation    TEXT,
+    source_title   TEXT,
+    last_wrong_at  TEXT NOT NULL,
+    attempts       INTEGER NOT NULL DEFAULT 1,
+    resolved       INTEGER NOT NULL DEFAULT 0,
+    UNIQUE(topic_id, question_key)
+  );
+
   CREATE TABLE IF NOT EXISTS settings (
     key   TEXT PRIMARY KEY,
     value TEXT

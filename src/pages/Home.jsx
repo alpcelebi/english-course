@@ -33,6 +33,9 @@ export default function Home() {
               <Link to="/seviyeler" className="btn btn--primary">
                 Seviyelere Başla
               </Link>
+              <Link to="/seviye-testi" className="btn btn--ghost">
+                Seviyeni Bul
+              </Link>
               <Link to="/test" className="btn btn--ghost">
                 Test Bankası
               </Link>

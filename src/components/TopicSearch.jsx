@@ -5,6 +5,49 @@ import './TopicSearch.css'
 
 const MIN_QUERY_LENGTH = 2
 const MAX_RESULTS = 6
+const SEARCH_ALIASES = [
+  {
+    match: ['conditional', 'koşul', 'kosul', 'unless', 'as long as', 'wish', 'if only'],
+    keywords:
+      'if clause if clauses conditional clause conditional clauses conditional sentence conditionals kosul cumleleri',
+  },
+  {
+    match: ['passive', 'edilgen'],
+    keywords: 'passive voice passive form edilgen cati',
+  },
+  {
+    match: ['reported', 'dolaylı', 'dolayli', 'indirect'],
+    keywords: 'reported speech indirect speech dolayli anlatim',
+  },
+  {
+    match: ['relative', 'who', 'which'],
+    keywords: 'relative clause relative clauses adjective clause ilgi cumlecigi',
+  },
+  {
+    match: ['modal', 'can', 'could', 'should', 'must', 'may', 'might'],
+    keywords: 'modals modal verbs yardımcı fiiller yardimci fiiller',
+  },
+  {
+    match: ['gerund', 'infinitive'],
+    keywords: 'verb patterns ing to gerund infinitive',
+  },
+  {
+    match: ['present simple', 'geniş', 'genis'],
+    keywords: 'simple present genis zaman present simple',
+  },
+  {
+    match: ['present continuous', 'şimdiki', 'simdiki'],
+    keywords: 'present progressive simdiki zaman present continuous',
+  },
+  {
+    match: ['past simple', 'geçmiş', 'gecmis'],
+    keywords: 'simple past past tense gecmis zaman',
+  },
+  {
+    match: ['present perfect'],
+    keywords: 'perfect tense have has v3 present perfect',
+  },
+]
 
 function normalizeSearch(value) {
   return String(value)
@@ -12,6 +55,18 @@ function normalizeSearch(value) {
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/ı/g, 'i')
+}
+
+const normalizedAliases = SEARCH_ALIASES.map((group) => ({
+  ...group,
+  match: group.match.map(normalizeSearch),
+}))
+
+function aliasKeywordsFor(normalizedText) {
+  return normalizedAliases
+    .filter((group) => group.match.some((term) => normalizedText.includes(term)))
+    .map((group) => group.keywords)
+    .join(' ')
 }
 
 export default function TopicSearch({ className = '' }) {
@@ -28,17 +83,21 @@ export default function TopicSearch({ className = '' }) {
       const level = levelById.get(topic.level)
       const levelLabel = level ? `${level.code} ${level.name} ${level.tag}` : topic.level
 
+      const baseText = [
+        topic.title,
+        topic.subtitle,
+        topic.summary,
+        topic.keywords?.join(' '),
+        levelLabel,
+        topic.sections?.map((section) => `${section.heading} ${section.subheading}`).join(' '),
+      ].join(' ')
+      const normalizedBaseText = normalizeSearch(baseText)
+
       return {
         ...topic,
         levelCode: level?.code ?? topic.level.toUpperCase(),
         searchable: normalizeSearch(
-          [
-            topic.title,
-            topic.subtitle,
-            topic.summary,
-            levelLabel,
-            topic.sections?.map((section) => `${section.heading} ${section.subheading}`).join(' '),
-          ].join(' ')
+          `${baseText} ${aliasKeywordsFor(normalizedBaseText)}`
         ),
       }
     })
