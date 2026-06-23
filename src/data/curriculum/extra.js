@@ -2402,7 +2402,7 @@ export default {
   a1: buildLevel('a1', 7, a1Specs),
   a2: buildLevel('a2', 7, a2Specs),
   b1: buildLevel('b1', 5, b1Specs),
-  b2: buildLevel('b2', 7, b2Specs),
+  b2: buildLevel('b2', 8, b2Specs),
   c1: buildLevel('c1', 7, c1Specs),
   c2: buildLevel('c2', 7, c2Specs),
 }

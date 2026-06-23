@@ -62,6 +62,7 @@ const subtitleEn = {
   'Dolaylı Anlatım': 'Indirect speech',
   'İlgi (Sıfat) Cümleleri': 'Relative clauses',
   'Çıkarım Modalları': 'Modals for deduction',
+  'İmkânsızlık, Tercih ve Güçlü Tavsiye': 'Impossibility, preference, and strong advice',
   'Devrik Yapılar': 'Inverted structures',
   'Vurgu Cümleleri': 'Emphatic sentence patterns',
   'Ortaç Cümlecikleri': 'Participle clauses',
