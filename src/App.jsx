@@ -9,6 +9,7 @@ import TestHub from './pages/TestHub'
 import Progress from './pages/Progress'
 import Mistakes from './pages/Mistakes'
 import PlacementTest from './pages/PlacementTest'
+import VocabularyPractice from './pages/VocabularyPractice'
 import { useProgress } from './context/ProgressContext'
 import { useLanguage } from './context/LanguageContext'
 import './App.css'
@@ -42,6 +43,7 @@ export default function App() {
           <Route path="/ders/:id" element={<LessonDetail />} />
           <Route path="/test" element={<TestHub />} />
           <Route path="/seviye-testi" element={<PlacementTest />} />
+          <Route path="/kelimeler/:levelId" element={<VocabularyPractice />} />
           <Route path="/yanlislar" element={<Mistakes />} />
           <Route path="/ilerleme" element={<Progress />} />
           <Route path="*" element={<Home />} />

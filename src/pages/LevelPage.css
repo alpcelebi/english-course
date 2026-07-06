@@ -76,6 +76,66 @@
   padding: 56px 24px 80px;
 }
 
+.container.level-page__vocabulary {
+  padding: 44px 24px 0;
+}
+
+.level-vocab-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 28px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent-tint) 68%, transparent), transparent 62%),
+    var(--surface);
+  box-shadow: var(--shadow-sm);
+  padding: 28px;
+}
+
+.level-vocab-card h2 {
+  margin: 6px 0 10px;
+  font-size: clamp(1.65rem, 3vw, 2.2rem);
+}
+
+.level-vocab-card p {
+  max-width: 68ch;
+  color: var(--text-soft);
+  line-height: 1.65;
+}
+
+.level-vocab-card__side {
+  min-width: 180px;
+  display: grid;
+  justify-items: end;
+  gap: 10px;
+  text-align: right;
+}
+
+.level-vocab-card__side strong {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  line-height: 1;
+  color: var(--accent-strong);
+}
+
+.level-vocab-card__side span {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.level-vocab-card__soon {
+  display: inline-flex;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+
 .level-page__missing {
   text-align: center;
   padding: 100px 0;
@@ -93,5 +153,15 @@
   .level-hero__code { width: 72px; height: 72px; font-size: 2.2rem; }
   .container.level-page__topics {
     padding-top: 52px;
+  }
+  .container.level-page__vocabulary {
+    padding-top: 34px;
+  }
+  .level-vocab-card {
+    grid-template-columns: 1fr;
+  }
+  .level-vocab-card__side {
+    justify-items: start;
+    text-align: left;
   }
 }

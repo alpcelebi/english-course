@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { getLevel } from '../data/levels'
 import { getTopicsByLevel, isLevelReady } from '../data'
+import { getVocabularyCount, TARGET_PER_LEVEL } from '../data/vocabulary'
 import { useProgress } from '../context/ProgressContext'
 import { useLanguage } from '../context/LanguageContext'
 import { localizeLevel, localizeTopics } from '../i18n/content'
@@ -13,6 +14,7 @@ export default function LevelPage() {
   const { completed } = useProgress()
   const { language, t } = useLanguage()
   const rawTopics = getTopicsByLevel(id)
+  const vocabularyCount = getVocabularyCount(id)
   const level = localizeLevel(rawLevel, language)
   const topics = localizeTopics(rawTopics, language)
 
@@ -69,6 +71,37 @@ export default function LevelPage() {
           </Link>
         </div>
       </header>
+
+      <section className="container level-page__vocabulary" aria-labelledby="level-vocabulary-title">
+        <div className="level-vocab-card">
+          <div className="level-vocab-card__copy">
+            <span className="eyebrow">{language === 'en' ? 'Vocabulary' : 'Kelimeler'}</span>
+            <h2 id="level-vocabulary-title">
+              {language === 'en' ? `${level.code} Word Practice` : `${level.code} Kelime Çalış`}
+            </h2>
+            <p>
+              {vocabularyCount
+                ? language === 'en'
+                  ? `${vocabularyCount} B2 words and phrases with Turkish meanings and example sentences. Study random cards and reveal the answer when you are unsure.`
+                  : `${vocabularyCount} kelime ve söz kalıbı; anlamı ve cümle içinde kullanımıyla. Rastgele kart çalış, bilemediğinde cevabı aç.`
+                : language === 'en'
+                ? `The target is ${TARGET_PER_LEVEL} words and phrases for this level. This bank will be added soon.`
+                : `Bu seviye için hedef ${TARGET_PER_LEVEL} kelime ve söz kalıbı. Bu banka yakında eklenecek.`}
+            </p>
+          </div>
+          <div className="level-vocab-card__side">
+            <strong>{vocabularyCount || TARGET_PER_LEVEL}</strong>
+            <span>{language === 'en' ? (vocabularyCount ? 'cards ready' : 'target cards') : vocabularyCount ? 'kart hazır' : 'hedef kart'}</span>
+            {vocabularyCount ? (
+              <Link to={`/kelimeler/${level.id}`} className="btn btn--primary">
+                {language === 'en' ? 'Study Words →' : 'Kelime Çalış →'}
+              </Link>
+            ) : (
+              <span className="level-vocab-card__soon">{t('soon')}</span>
+            )}
+          </div>
+        </div>
+      </section>
 
       <section className="container level-page__topics">
         <div className="lesson-grid">
